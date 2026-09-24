@@ -3,12 +3,12 @@ import { LogOut, X, Shield } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
-  const { user, isOwner, logout } = useAuth();
+  const { user, isCounsellor, logout } = useAuth();
 
   if (!isOpen) return null;
 
-  const userName = user?.name || (isOwner ? 'Vasantham Admin' : 'Showroom Staff');
-  const userRole = user?.role === 'owner' ? 'Showroom Owner' : 'Sales Executive';
+  const userName = user?.name || user?.email || 'User';
+  const userRole = user?.role || 'User';
   const userInitials = userName
     .split(' ')
     .map((n) => n[0])
@@ -46,12 +46,11 @@ export const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
           maxWidth: '420px',
           backgroundColor: '#FFFFFF',
           borderRadius: '20px',
-          boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8)',
+          boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
           overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Bar */}
         <div
           style={{
             padding: '20px 24px 16px 24px',
@@ -83,7 +82,7 @@ export const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
                 Confirm Sign Out
               </h3>
               <p style={{ margin: '4px 0 0 0', fontSize: '12.5px', color: '#64748B' }}>
-                Vasantham CRM Session Security
+                Admission CRM Session Security
               </p>
             </div>
           </div>
@@ -107,13 +106,11 @@ export const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
           </button>
         </div>
 
-        {/* Body Content */}
         <div style={{ padding: '20px 24px' }}>
           <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#334155', lineHeight: '1.5' }}>
-            Are you sure you want to log out of your session? Any unsaved customer edit forms or active draft notes will be closed.
+            Are you sure you want to log out of your counseling workspace session?
           </p>
 
-          {/* User Profile Info Card */}
           <div
             style={{
               padding: '12px 14px',
@@ -148,13 +145,12 @@ export const LogoutConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
               </div>
               <div style={{ fontSize: '11.5px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
                 <Shield size={11} color="#2563EB" />
-                <span>{userRole}</span>
+                <span style={{ textTransform: 'capitalize' }}>{userRole}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Actions Footer Bar */}
         <div
           style={{
             padding: '16px 24px 20px 24px',

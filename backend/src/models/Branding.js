@@ -4,17 +4,17 @@ const brandingSchema = new mongoose.Schema({
   appName: {
     type: String,
     required: true,
-    default: 'BuildCRM',
+    default: 'EduMerge Admission CRM',
     trim: true,
   },
   appShortName: {
     type: String,
-    default: 'BuildCRM',
+    default: 'EduMerge',
     trim: true,
   },
   tagline: {
     type: String,
-    default: 'Tiles & Sanitary Wares CRM',
+    default: 'Educational Institution Admission Management System',
     trim: true,
   },
   logoType: {
@@ -24,7 +24,7 @@ const brandingSchema = new mongoose.Schema({
   },
   logoIcon: {
     type: String,
-    default: 'Box',
+    default: 'GraduationCap',
   },
   logoImage: {
     type: String,

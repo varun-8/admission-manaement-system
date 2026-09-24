@@ -1,15 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
-  Box,
+  GraduationCap,
   Building2,
-  Layers,
+  BookOpen,
   Sparkles,
   Shield,
   Crown,
-  Gem,
-  Store,
-  Compass,
-  Hexagon,
+  Award,
+  School,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useToast } from './ToastContext';
@@ -19,34 +17,32 @@ import logoImg from '../assets/logo.png';
 const BrandingContext = createContext(null);
 
 export const BRAND_ICONS = {
-  Box: { name: 'Box (3D Cube)', icon: Box },
-  Building2: { name: 'Building (Showroom)', icon: Building2 },
-  Layers: { name: 'Layers (Tiles & Stack)', icon: Layers },
-  Sparkles: { name: 'Sparkles (Premium)', icon: Sparkles },
-  Store: { name: 'Store (Retail Counter)', icon: Store },
-  Shield: { name: 'Shield (Trusted Brand)', icon: Shield },
-  Crown: { name: 'Crown (Luxury)', icon: Crown },
-  Gem: { name: 'Gem (Prestige)', icon: Gem },
-  Compass: { name: 'Compass (Architecture)', icon: Compass },
-  Hexagon: { name: 'Hexagon (Modern Tile)', icon: Hexagon },
+  GraduationCap: { name: 'Graduation Cap (Education)', icon: GraduationCap },
+  School: { name: 'School (Campus)', icon: School },
+  Building2: { name: 'Building (Academic Block)', icon: Building2 },
+  BookOpen: { name: 'Book (Programs)', icon: BookOpen },
+  Sparkles: { name: 'Sparkles (Excellence)', icon: Sparkles },
+  Shield: { name: 'Shield (Accredited)', icon: Shield },
+  Crown: { name: 'Crown (Top Ranked)', icon: Crown },
+  Award: { name: 'Award (Recognition)', icon: Award },
 };
 
 export const BrandingProvider = ({ children }) => {
   const toast = useToast();
   const [branding, setBranding] = useState(() => {
     try {
-      const cached = localStorage.getItem('vasantham_crm_branding');
+      const cached = localStorage.getItem('admission_crm_branding');
       if (cached) return JSON.parse(cached);
     } catch (e) {}
     return {
-      appName: 'Vasantham Tiles & Sanitary Wares',
-      appShortName: 'Vasantham CRM',
-      tagline: 'Tiles, Sanitary Wares, CP Fittings & Adhesives',
-      address: '124, Bypass Road, Near Bus Stand, Madurai, Tamil Nadu - 625001',
-      phone: '+91 98401 23456',
-      gstin: '33AAAAA0000A1Z5',
+      appName: 'EduMerge Admission CRM',
+      appShortName: 'EduMerge',
+      tagline: 'Educational Institution Admission Management System',
+      address: 'Campus Admissions Office, Main Academic Block',
+      phone: '+91 98765 43210',
+      gstin: '',
       logoType: 'image',
-      logoIcon: 'Box',
+      logoIcon: 'GraduationCap',
       logoImage: logoImg,
       primaryColor: '#2563EB',
     };
@@ -58,7 +54,7 @@ export const BrandingProvider = ({ children }) => {
       const res = await api.getBranding();
       if (res && res.success && res.data) {
         setBranding(res.data);
-        localStorage.setItem('vasantham_crm_branding', JSON.stringify(res.data));
+        localStorage.setItem('admission_crm_branding', JSON.stringify(res.data));
       }
     } catch (e) {
       console.warn('Error loading branding config:', e.message);
@@ -73,17 +69,15 @@ export const BrandingProvider = ({ children }) => {
 
   const updateBranding = async (updatedData) => {
     try {
-      // 1. Instant local update & localStorage persistence
       setBranding(updatedData);
-      localStorage.setItem('vasantham_crm_branding', JSON.stringify(updatedData));
+      localStorage.setItem('admission_crm_branding', JSON.stringify(updatedData));
 
-      // 2. Persist to MongoDB backend
       const res = await api.updateBranding(updatedData);
       if (res && res.success && res.data) {
         setBranding(res.data);
-        localStorage.setItem('vasantham_crm_branding', JSON.stringify(res.data));
+        localStorage.setItem('admission_crm_branding', JSON.stringify(res.data));
       }
-      toast.success('Showroom branding and logo updated successfully.', 'Branding Saved');
+      toast.success('Institution branding updated successfully.', 'Branding Saved');
       return { success: true, data: updatedData };
     } catch (e) {
       console.warn('Backend branding sync notice:', e.message);
@@ -92,7 +86,6 @@ export const BrandingProvider = ({ children }) => {
     }
   };
 
-  // Render brand logo component
   const renderLogo = (size = 20, color = '#FFFFFF') => {
     const logoSrc = (branding.logoType === 'image' && branding.logoImage)
       ? branding.logoImage
@@ -102,7 +95,7 @@ export const BrandingProvider = ({ children }) => {
       return (
         <img
           src={logoSrc}
-          alt={branding.appName || 'Showroom Logo'}
+          alt={branding.appName || 'Institution Logo'}
           style={{
             width: typeof size === 'number' ? `${size}px` : size,
             height: typeof size === 'number' ? `${size}px` : size,
@@ -116,7 +109,7 @@ export const BrandingProvider = ({ children }) => {
       );
     }
 
-    const IconComponent = BRAND_ICONS[branding.logoIcon]?.icon || Box;
+    const IconComponent = BRAND_ICONS[branding.logoIcon]?.icon || GraduationCap;
     return <IconComponent size={size} color={color} strokeWidth={2.5} />;
   };
 
@@ -127,14 +120,13 @@ export const BrandingProvider = ({ children }) => {
         updateBranding,
         fetchBranding,
         loading,
-        appName: branding.appName || 'Vasantham Tiles & Sanitary Wares',
-        appShortName: branding.appShortName || 'Vasantham CRM',
-        tagline: branding.tagline || 'Tiles & Sanitary Wares CRM',
-        address: branding.address || '124, Bypass Road, Near Bus Stand, Madurai, Tamil Nadu - 625001',
-        phone: branding.phone || '+91 98401 23456',
-        gstin: branding.gstin || '33AAAAA0000A1Z5',
+        appName: branding.appName || 'EduMerge Admission CRM',
+        appShortName: branding.appShortName || 'EduMerge',
+        tagline: branding.tagline || 'Educational Institution Admission Management System',
+        address: branding.address || 'Campus Admissions Office, Main Academic Block',
+        phone: branding.phone || '+91 98765 43210',
         logoType: branding.logoType || 'image',
-        logoIcon: branding.logoIcon || 'Box',
+        logoIcon: branding.logoIcon || 'GraduationCap',
         logoImage: branding.logoImage || '',
         primaryColor: branding.primaryColor || '#2563EB',
         renderLogo,

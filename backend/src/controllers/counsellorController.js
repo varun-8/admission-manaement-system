@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const Lead = require('../models/Lead');
-const Target = require('../models/Target');
 
 exports.getCounsellors = async (req, res) => {
   try {
@@ -56,4 +55,3 @@ exports.deleteCounsellor = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-

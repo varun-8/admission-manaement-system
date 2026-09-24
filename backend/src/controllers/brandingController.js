@@ -7,11 +7,11 @@ const getBranding = async (req, res) => {
     let branding = await Branding.findOne();
     if (!branding) {
       branding = await Branding.create({
-        appName: 'BuildCRM',
-        appShortName: 'BuildCRM',
-        tagline: 'Tiles & Sanitary Wares CRM',
+        appName: 'EduMerge Admission CRM',
+        appShortName: 'EduMerge',
+        tagline: 'Educational Institution Admission Management System',
         logoType: 'icon',
-        logoIcon: 'Box',
+        logoIcon: 'GraduationCap',
         logoImage: '',
         primaryColor: '#2563EB',
       });
