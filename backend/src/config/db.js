@@ -1,0 +1,70 @@
+const mongoose = require('mongoose');
+
+const DEFAULT_LOCAL_URI = 'mongodb://127.0.0.1:27017/admission_management';
+
+let isConnecting = false;
+let retryInterval = null;
+
+mongoose.set('bufferTimeoutMS', 15000);
+
+const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  if (isConnecting) return;
+  isConnecting = true;
+
+  const mongoUri = process.env.MONGODB_URI || DEFAULT_LOCAL_URI;
+  const isLocal = mongoUri.includes('127.0.0.1') || mongoUri.includes('localhost');
+
+  try {
+    const conn = await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+      ...(isLocal ? { directConnection: true } : {}),
+    });
+    const dbType = isLocal ? 'Local MongoDB' : 'MongoDB Atlas Cloud';
+    console.log(`[${dbType}] Connected successfully: ${conn.connection.host} / ${conn.connection.name}`);
+
+    if (retryInterval) {
+      clearInterval(retryInterval);
+      retryInterval = null;
+    }
+    isConnecting = false;
+    return conn;
+  } catch (error) {
+    console.error(`[Database Connection Warning] Failed to connect to ${mongoUri}: ${error.message}`);
+
+    if (!isLocal) {
+      console.log(`[Local MongoDB Fallback] Trying local MongoDB instance at ${DEFAULT_LOCAL_URI}...`);
+      try {
+        const fallbackConn = await mongoose.connect(DEFAULT_LOCAL_URI, {
+          serverSelectionTimeoutMS: 5000,
+        });
+        console.log(`[Local MongoDB Fallback] Connected successfully: ${fallbackConn.connection.host} / ${fallbackConn.connection.name}`);
+        if (retryInterval) {
+          clearInterval(retryInterval);
+          retryInterval = null;
+        }
+        isConnecting = false;
+        return fallbackConn;
+      } catch (fallbackError) {
+        console.error(`[Local MongoDB Fallback Failed] ${fallbackError.message}`);
+      }
+    }
+
+    console.warn('[Database Notice] Backend server will remain running while attempting auto-reconnect every 5 seconds.');
+    console.warn('👉 Please ensure MongoDB Community Server service is started on port 27017 (mongodb://127.0.0.1:27017)');
+    
+    isConnecting = false;
+
+    if (!retryInterval) {
+      retryInterval = setInterval(() => {
+        connectDB();
+      }, 5000);
+    }
+  }
+};
+
+module.exports = connectDB;
